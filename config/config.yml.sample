@@ -1,0 +1,6 @@
+redis:
+  production:  redis://localhost:6379
+  development: redis://localhost:6379
+  test:        redis://localhost:6379
+
+yahoo_api: xxxxxxxxxxxxx
