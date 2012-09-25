@@ -28,6 +28,12 @@ module Dubot
       end
     end
 
+    def from_file(name, file)
+      File.open(file).each_line do |line|
+        from_string(name, line)
+      end
+    end
+
     private
 
     def save_words(name, chunk_list)

@@ -1,11 +1,10 @@
-require "dubot/version"
+require 'dubot/version'
+require 'dubot/cli'
+require 'dubot/db'
+require 'dubot/config'
+require 'dubot/models/words'
 
 module Dubot
-  require 'dubot/cli'
-  require 'dubot/db'
-  require 'dubot/config'
-  require 'dubot/models/words'
-
   autoload :AnalysisResults,      'dubot/models/analysis_results'
   autoload :Lerning,              'dubot/lerning'
   autoload :YahooDAService,       'dubot/yahoo_daservice'
