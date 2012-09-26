@@ -1,22 +1,24 @@
 # -*- coding: utf-8 -*-
-require 'ostruct'
 require 'yaml'
+require 'singleton'
 
 module Dubot
-  class Config < OpenStruct
-    def self.instance
-      unless @instance
-        @instance = self.load
-      end
-      @instance
-    end
+  class Config
+    include Singleton
 
-    def self.load
-      self.new
+    class << self
+      def method_missing(id)
+        config = instance.config
+        config.key?(id.to_s) ? config[id.to_s] : super(id)
+      end
     end
 
     def initialize
-      super YAML.load_file config_path
+      @config = YAML.load_file(config_path)
+    end
+
+    def config
+      @config
     end
 
     private
@@ -26,4 +28,3 @@ module Dubot
     end
   end
 end
-

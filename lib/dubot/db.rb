@@ -12,8 +12,7 @@ module Dubot
 
     def self.redis
       unless @redis
-        config = Config.instance
-        uri = URI.parse(config.redis['production'])
+        uri = URI.parse(Config.redis)
         @redis = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
       end
       @redis
