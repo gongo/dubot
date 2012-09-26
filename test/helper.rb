@@ -12,13 +12,8 @@ require 'mock_redis'
 
 module Dubot
   class Db
-    private
-
-    def self.redis
-      unless @redis
-        @redis = MockRedis.new
-      end
-      @redis
+    def connection_start
+      MockRedis.new
     end
   end
 end

@@ -4,7 +4,7 @@ require 'fixture_xml'
 
 class WordTest < Test::Unit::TestCase
   def setup
-    Dubot::Word.delete_db
+    Dubot::Word.adapter.flushdb
   end
 
   def test_save

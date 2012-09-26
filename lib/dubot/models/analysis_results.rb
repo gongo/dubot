@@ -2,7 +2,7 @@
 require 'json'
 
 module Dubot
-  class AnalysisResults < Dubot::Db
+  class AnalysisResults < Dubot::Model
     include Enumerable
 
     KEY = "analysis_results"
@@ -10,11 +10,7 @@ module Dubot
     #
     # Dubot::AnalysisResults の データベースインデックス
     #
-    # @return [Integer] 1
-    #
-    def self.dbindex
-      1
-    end
+    DB_INDEX = 1
 
     #
     # Yahoo Developer API の形態素・係り受け解析結果 を

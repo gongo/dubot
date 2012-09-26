@@ -1,7 +1,8 @@
 require 'dubot/version'
 require 'dubot/cli'
-require 'dubot/db'
 require 'dubot/config'
+require 'dubot/db'
+require 'dubot/model'
 require 'dubot/models/words'
 
 module Dubot

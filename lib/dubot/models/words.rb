@@ -2,11 +2,16 @@
 require 'json'
 
 module Dubot
-  class Word < Dubot::Db
+  class Word < Dubot::Model
     #
     #
     #
     PREFIX = 'uid'
+
+    #
+    # Dubot::Word の データベースインデックス
+    #
+    DB_INDEX = 0
 
     attr :text, :chain_text
 
@@ -14,15 +19,6 @@ module Dubot
       @uid  = uid
       @text = text
       @chain_text = chain_text
-    end
-
-    #
-    # Dubot::Word の データベースインデックス
-    #
-    # @return [Integer] 0
-    #
-    def self.dbindex
-      0
     end
 
     #
