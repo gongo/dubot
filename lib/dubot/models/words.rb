@@ -2,7 +2,7 @@
 require 'json'
 
 module Dubot
-  class Word
+  class Word < Dubot::Db
     #
     #
     #
@@ -17,16 +17,25 @@ module Dubot
     end
 
     #
+    # Dubot::Word の データベースインデックス
+    #
+    # @return [Integer] 0
+    #
+    def self.dbindex
+      0
+    end
+
+    #
     # 繋がる単語を取得する
     #
     # @param [String]
-    #   name ユーザ名。もし指定されていれば、そのユーザの発言から検索する
+    #   user ユーザ名。もし指定されていれば、そのユーザの発言から検索する
     #
     # @return [Word]
     #   存在しなければ nil
     #
-    def cont(name = nil)
-      self.class.cont(name, @chain_text)
+    def cont(user = nil)
+      self.class.cont(user, @chain_text)
     end
 
     #
@@ -43,9 +52,9 @@ module Dubot
     # @yield [text]
     # @yieldparam [String] 連結した単語の文字列
     #
-    def chain(name = nil)
+    def chain(user = nil)
       cur_word = self
-      while (next_word = cur_word.cont(name)) do
+      while (next_word = cur_word.cont(user)) do
         yield next_word.text
         cur_word = next_word
       end
@@ -68,7 +77,7 @@ module Dubot
         ret = nil
 
         if uid.instance_of?(String) && /^#{PREFIX}\d+$/ === uid
-          text, chain_text = JSON.parse(Dubot::Db.get(uid))
+          text, chain_text = JSON.parse(adapter.get(uid))
           ret = self.new(uid, text, chain_text)
         end
 
@@ -79,20 +88,20 @@ module Dubot
       # 文頭になりえる Word を返す
       #
       # @param [String]
-      #   name ユーザ名。もし指定されていれば、そのユーザの発言から検索する
+      #   user ユーザ名。もし指定されていれば、そのユーザの発言から検索する
       #
       # @return [Dubot::Word]
       #   存在しなければ nil
       #
-      def start(name = nil)
-        random_inter 'type:head', get_user_key(name)
+      def start(user = nil)
+        random_inter 'type:head', get_user_key(user)
       end
 
       #
       # 繋がる単語を取得する
       #
       # @param [String]
-      #   name ユーザ名。もし指定されていれば、そのユーザの発言から検索する
+      #   user ユーザ名。もし指定されていれば、そのユーザの発言から検索する
       #
       # @param [String]
       #   chain_text 繋げる単語
@@ -100,8 +109,8 @@ module Dubot
       # @return [Word]
       #   存在しなければ nil
       #
-      def cont(name = nil, chain_text = nil)
-        random_inter get_head_key(chain_text), get_user_key(name)
+      def cont(user = nil, chain_text = nil)
+        random_inter get_head_key(chain_text), get_user_key(user)
       end
 
       #
@@ -110,7 +119,7 @@ module Dubot
       # @return [Word]
       #
       def random
-        find(Dubot::Db.srandmember('words'))
+        find(adapter.srandmember('words'))
       end
 
       #
@@ -123,8 +132,8 @@ module Dubot
       #   random_inter 'type:head', 'user:hoge'
       #
       def random_inter(*args)
-        Dubot::Db.sinterstore('candidate', *args)
-        find(Dubot::Db.srandmember('candidate'))
+        adapter.sinterstore('candidate', *args)
+        find(adapter.srandmember('candidate'))
       end
 
       #
@@ -137,13 +146,13 @@ module Dubot
       #   random_union 'type:head', 'user:hoge'
       #
       def random_union(*args)
-        Dubot::Db.sunionstore('candidate', *args)
-        find(Dubot::Db.srandmember('candidate'))
+        adapter.sunionstore('candidate', *args)
+        find(adapter.srandmember('candidate'))
       end
 
       #
       # @param [String]
-      #   name ユーザ名
+      #   user ユーザ名
       #
       # @param [String]
       #   text 本文
@@ -160,13 +169,13 @@ module Dubot
       # @return [Word]
       #   保存した Word
       #
-      def save(name, text, head, chain, type)
+      def save(user, text, head, chain, type)
         id = PREFIX + get_msg_id
-        Dubot::Db.set id, [text, chain].to_json
-        Dubot::Db.sadd "words", id
-        Dubot::Db.sadd "user:#{name}", id
-        Dubot::Db.sadd "type:#{type}", id
-        Dubot::Db.sadd "head:#{head}", id
+        adapter.set id, [text, chain].to_json
+        adapter.sadd "words", id
+        adapter.sadd "user:#{user}", id
+        adapter.sadd "type:#{type}", id
+        adapter.sadd "head:#{head}", id
         find(id)
       end
 
@@ -184,7 +193,7 @@ module Dubot
       def get_user_key(user)
         case
         when user.instance_of?(Array)
-          Dubot::Db.sunionstore(__method__.to_s, user.map { |u| "user:#{u}" })
+          adapter.sunionstore(__method__.to_s, user.map { |u| "user:#{u}" })
           __method__.to_s
         when user.instance_of?(String)
           "user:#{user}"
@@ -208,7 +217,7 @@ module Dubot
       end
 
       def get_msg_id
-        Dubot::Db.incr("msg_id").to_s
+        adapter.incr("msg_id").to_s
       end
     end
   end

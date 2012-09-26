@@ -2,10 +2,19 @@
 require 'json'
 
 module Dubot
-  class AnalysisResults
+  class AnalysisResults < Dubot::Db
     include Enumerable
 
     KEY = "analysis_results"
+
+    #
+    # Dubot::AnalysisResults の データベースインデックス
+    #
+    # @return [Integer] 1
+    #
+    def self.dbindex
+      1
+    end
 
     #
     # Yahoo Developer API の形態素・係り受け解析結果 を
@@ -14,7 +23,7 @@ module Dubot
     # @see http://redis.shibu.jp/commandreference/lists.html#command-LPUSH
     #
     # @param [String]
-    #   name ユーザ名
+    #   user ユーザ名
     #
     # @param [Array]
     #   body Yahoo Developer API の形態素・係り受け解析結果 パース
@@ -22,15 +31,15 @@ module Dubot
     # @return [Integer]
     #   現在保存されている解析結果の数
     #
-    def self.insert(name, body)
-      Dubot::Db.rpush KEY, {'name' => name, 'body' => body}.to_json
+    def self.insert(user, body)
+      adapter.rpush KEY, {'user' => user, 'body' => body}.to_json
     end
 
     def self.each
       return to_enum(:each) unless block_given?
       all.each do |record|
         obj = JSON.parse(record)
-        yield obj['name'], obj['body']
+        yield obj['user'], obj['body']
       end
     end
 
@@ -41,10 +50,10 @@ module Dubot
     #
     # @return [Array]
     #   現在保存されている解析結果の配列
-    #   各要素は "name:xml"
+    #   各要素は "user:xml"
     #
     def self.all
-      Dubot::Db.lrange KEY, 0, -1
+      adapter.lrange KEY, 0, -1
     end
   end
 end

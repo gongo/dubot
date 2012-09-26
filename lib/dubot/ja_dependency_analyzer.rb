@@ -5,7 +5,7 @@ require 'ostruct'
 module Dubot
   class JaDependencyAnalyzer
     def self.from_text(text)
-      app_id = Config.instance.yahoo_api
+      app_id = Config.yahoo_api
       response = YahooDAService.request(app_id, text)
       from_xml(response.body)
     end

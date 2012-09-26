@@ -19,26 +19,26 @@ module Dubot
     def initialize
     end
 
-    def from_string(name, text)
+    def from_string(user, text)
       result = JaDependencyAnalyzer.from_text(text)
 
       if (result.instance_of?(Array) && !result.empty?)
-        AnalysisResults.insert(name, result)
-        save_words(name, result)
+        AnalysisResults.insert(user, result)
+        save_words(user, result)
       end
     end
 
-    def from_file(name, file)
+    def from_file(user, file)
       File.open(file).each_line do |line|
-        from_string(name, line)
+        from_string(user, line)
       end
     end
 
     private
 
-    def save_words(name, chunk_list)
+    def save_words(user, chunk_list)
       make_dependency(chunk_list).each do |word|
-        Word.save(name, word[:text], word[:head], word[:next], word[:type])
+        Word.save(user, word[:text], word[:head], word[:next], word[:type])
       end
     end
 

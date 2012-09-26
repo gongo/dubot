@@ -5,11 +5,11 @@ module Dubot
     desc "learning", "learning"
     method_option :text, :desc => 'training data (text)'
     method_option :file, :desc => 'training data (file)'
-    method_option :user, :desc => 'user for training', :required => true
+    method_option :user, :desc => 'name for training user', :required => true
     def learning
       text = options[:text]
       file = options[:file]
-      name = options[:name]
+      user = options[:user]
 
       unless text.nil? or file.nil?
         raise InvocationError, "Can't specify both --text or --file"
@@ -20,14 +20,14 @@ module Dubot
       end
 
       learning = Dubot::Learning.new
-      file.nil? ? learning.from_string(name, text) : learning.from_file(name, file)
+      file.nil? ? learning.from_string(user, text) : learning.from_file(user, file)
     end
 
     desc "sentence", "create sentence"
     method_option :length, :desc => 'Maximum length of generate text', :type => :numeric, :default => 140
-    method_option :user,   :desc => 'source user'
+    method_option :user,   :desc => 'source users', :type => :array
     def sentence
-      p Dubot::Sentence.new.run(:name => options[:user], :length => options[:length])
+      p Dubot::Sentence.new.run(:user => options[:user], :length => options[:length])
     end
   end
 end
