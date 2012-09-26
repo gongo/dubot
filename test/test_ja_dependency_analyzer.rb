@@ -18,8 +18,8 @@ class JaDependencyAnalyzerTest < Test::Unit::TestCase
     result = Dubot::JaDependencyAnalyzer.from_xml(DubotTest::FixtureXml.success)
 
     assert_equal(expect_surfaces.count, result.count)
-    assert_equal(expect_surfaces, result.map {|f| f.surfaces })
-    assert_equal(expect_features, result.map {|f| f.features })
+    assert_equal(expect_surfaces, result.map {|f| f[:surfaces] })
+    assert_equal(expect_features, result.map {|f| f[:features] })
   end
 
   def test_from_xml_failure

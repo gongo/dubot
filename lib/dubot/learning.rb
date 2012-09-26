@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+require 'ostruct'
+
 module Dubot
   class Learning
     #
@@ -34,6 +36,12 @@ module Dubot
       end
     end
 
+    def rebuild
+      AnalysisResults.each do |user, result|
+        save_words(user, result)
+      end
+    end
+
     private
 
     def save_words(user, chunk_list)
@@ -45,7 +53,8 @@ module Dubot
     def make_dependency(chunk_list)
       words = [{ :head => "", :next => "", :text => "", :type => :stop }]
 
-      chunk_list.each do |chunk|
+      chunk_list.each do |chunk_h|
+        chunk = OpenStruct.new(chunk_h)
         surfaces = chunk.surfaces
         features = chunk.features
 

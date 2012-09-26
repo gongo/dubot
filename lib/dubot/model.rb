@@ -6,6 +6,10 @@ module Dubot
       conn
     end
 
+    def self.truncate
+      adapter.flushdb
+    end
+
     def adapter
       self.class.adapter
     end

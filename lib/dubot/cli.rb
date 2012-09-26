@@ -29,5 +29,10 @@ module Dubot
     def sentence
       p Dubot::Sentence.new.run(:user => options[:user], :length => options[:length])
     end
+
+    desc "relearning", "relearning from analysis results"
+    def relearning
+      Dubot::Learning.new.rebuild
+    end
   end
 end

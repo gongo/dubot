@@ -12,15 +12,15 @@ class YahooDAServiceTest < Test::Unit::TestCase
   def test_request
     response = http_stub_setup(200, DubotTest::FixtureXml.success)
 
-    assert_equal(200, response.status)
-    assert_kind_of(String, response.body)
+    assert_equal(200, response[:status])
+    assert_kind_of(String, response[:body])
   end
 
   def test_request_failure
     response = http_stub_setup(403, DubotTest::FixtureXml.failure)
 
-    assert_equal(403, response.status)
-    assert_kind_of(String, response.body)
+    assert_equal(403, response[:status])
+    assert_kind_of(String, response[:body])
   end
 
   private

@@ -1,5 +1,4 @@
 require 'erb'
-require 'ostruct'
 require 'open-uri'
 
 module Dubot
@@ -14,10 +13,10 @@ module Dubot
       rescue OpenURI::HTTPError => e
         response = e.io
       ensure
-        analysis = OpenStruct.new({
+        analysis = {
           :status => response.status[0].to_i,
           :body   => response.read
-        })
+        }
         response.close
       end
 

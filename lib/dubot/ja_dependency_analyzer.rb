@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 require 'rexml/document'
-require 'ostruct'
 
 module Dubot
   class JaDependencyAnalyzer
     def self.from_text(text)
       app_id = Config.yahoo_api
       response = YahooDAService.request(app_id, text)
-      from_xml(response.body)
+      from_xml(response[:body])
     end
 
     #
@@ -46,12 +45,12 @@ module Dubot
           f.text.split(',').shift(2).join
         }
 
-        chunk_list << OpenStruct.new({
+        chunk_list << {
           :id         => chunk.get_text('Id').to_s.to_i,
           :surfaces   => surfaces,
           :features   => features,
           :dependency => chunk.get_text('Dependency').to_s.to_i
-        })
+        }
       end
 
       chunk_list
