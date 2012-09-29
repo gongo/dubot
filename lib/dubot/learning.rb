@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-require 'ostruct'
 
 module Dubot
   class Learning
@@ -37,6 +36,7 @@ module Dubot
     end
 
     def rebuild
+      Word.adapter.flushdb
       AnalysisResults.each do |user, result|
         save_words(user, result)
       end
@@ -53,14 +53,13 @@ module Dubot
     def make_dependency(chunk_list)
       words = [{ :head => "", :next => "", :text => "", :type => :stop }]
 
-      chunk_list.each do |chunk_h|
-        chunk = OpenStruct.new(chunk_h)
-        surfaces = chunk.surfaces
-        features = chunk.features
+      chunk_list.each do |chunk|
+        surfaces = chunk['surfaces']
+        features = chunk['features']
 
         text = surfaces.join
         head = surfaces[0...CHAIN_NUM].join
-        type = get_type(features, chunk.id, chunk.dependency)
+        type = get_type(features, chunk['id'], chunk['dependency'])
 
         unless [:stop, :last].include?(words.last[:type])
           words.last[:next] = head

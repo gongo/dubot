@@ -73,7 +73,7 @@ module Dubot
         ret = nil
 
         if uid.instance_of?(String) && /^#{PREFIX}\d+$/ === uid
-          text, chain_text = JSON.parse(adapter.get(uid))
+          text, chain_text = adapter.hmget(uid, 'text', 'chain')
           ret = self.new(uid, text, chain_text)
         end
 
@@ -167,7 +167,7 @@ module Dubot
       #
       def save(user, text, head, chain, type)
         id = PREFIX + get_msg_id
-        adapter.set id, [text, chain].to_json
+        adapter.hmset id, 'text', text, 'chain', chain
         adapter.sadd "words", id
         adapter.sadd "user:#{user}", id
         adapter.sadd "type:#{type}", id

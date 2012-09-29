@@ -46,10 +46,10 @@ module Dubot
         }
 
         chunk_list << {
-          :id         => chunk.get_text('Id').to_s.to_i,
-          :surfaces   => surfaces,
-          :features   => features,
-          :dependency => chunk.get_text('Dependency').to_s.to_i
+          'id'         => chunk.get_text('Id').to_s.to_i,
+          'surfaces'   => surfaces,
+          'features'   => features,
+          'dependency' => chunk.get_text('Dependency').to_s.to_i
         }
       end
 
