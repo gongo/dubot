@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+ENV["THOR_DEBUG"] = '1'
+
 require 'simplecov'
 SimpleCov.start do
   add_filter "/test/"
@@ -16,20 +18,4 @@ module Dubot
       MockRedis.new
     end
   end
-end
-
-
-# thor/spec/spec_helper.rb
-require 'stringio'
-def capture(stream)
-  begin
-    stream = stream.to_s
-    eval "$#{stream} = StringIO.new"
-    yield
-    result = eval("$#{stream}").string
-  ensure
-    eval("$#{stream} = #{stream.upcase}")
-  end
-
-  result
 end
